@@ -18,5 +18,20 @@ export default styles = StyleSheet.create({
   greeting: {
     fontSize: 30,
   },
+  header: {
+    width: 1000,
+    padding: 20,
+    backgroundColor: '#000000',
+    borderColor: '#639dda',
+    borderWidth: 2,
+  },
+  content: {
+    width: 1000,
+    height: 400,
+    flexDirection: 'row',
+  },
+  title: {
+    fontSize: 30,
+  },
 });
 

@@ -5,14 +5,20 @@ import {
   View,
   NativeModules,
 } from 'react-360';
+import { connect, Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import thunkMiddleware from 'redux-thunk'
 
 import config from './components/config';
 import styles from './components/styles';
+import * as actions from './components/actions';
+import reducer from './components/reducers';
 import Login from './components/Login';
 import UserInfo from './components/UserInfo';
 import FlashAirList from './components/FlashAirList';
 
 const {MyModule} = NativeModules;
+const store = createStore(reducer, applyMiddleware(thunkMiddleware));
 
 export default class FlashAirIoTHub_VR extends React.Component {
   constructor(props) {
@@ -23,69 +29,51 @@ export default class FlashAirIoTHub_VR extends React.Component {
       const fragments = new URLSearchParams(part[1]);
       accessToken = fragments.get("access_token")
     }
-    this.state = { 
-      accessToken,
-      user: {email: ''},
-      flashairs: [],
-    };
+    this.props.setAccessToken(accessToken);
   }
-  _updateFlashAirList = () => {
-    fetch(`${config.apiBase}/v1/flashairs`, {
-      headers: {
-        'Authorization': `Bearer ${this.state.accessToken}`,
-      },
-    }).then(response => {
-      if (response.status === 401) {
-        this.setState({accessToken: ''});
-        return;
-      }
-      if (response.status !== 200) {
-        console.log('error', response.status)
-        return;
-      }
-      response.json().then(body => {
-        this.setState({flashairs: body.flashairs});
-      });
-    });
-  };
-  _updateUserInfo = () => {
-    fetch(`${config.apiBase}/v1/users/self`, {
-      headers: {
-        'Authorization': `Bearer ${this.state.accessToken}`,
-      },
-    }).then(response => {
-      if (response.status === 401) {
-        this.setState({accessToken: ''});
-        return;
-      }
-      if (response.status !== 200) {
-        console.log('error', response.status)
-        return;
-      }
-      response.json().then(user => {
-        this.setState({ user });
-      });
-    });
-  };
   render() {
+    if (!this.props.login) {
+      return <Login />;
+    }
     return (
       <View>
-        {this.state.accessToken ? (
-          <View style={styles.panel}>
-            <View style={styles.greetingBox}>
-              <Text style={styles.greeting}>
-                FlashAir IoT Hub - VR Demo
-              </Text>
-            </View>
-            <UserInfo updateUserInfo={this._updateUserInfo} user={this.state.user} />
-            <FlashAirList updateFlashAirList={this._updateFlashAirList} flashairs={this.state.flashairs} />
+        <View style={styles.panel}>
+          <View style={styles.header}>
+            <Text style={styles.title}>
+              FlashAir IoT Hub - VR Demo
+            </Text>
+            <UserInfo updateUserInfo={this.props.updateUserInfo} user={this.props.user} />
           </View>
-        ) : (
-          <Login />
-        )}
+          <View style={styles.content}>
+            <FlashAirList
+              updateFlashAirList={this.props.updateFlashAirList}
+              selectFlashAir={this.props.selectFlashAir}
+              flashairs={this.props.flashairs}
+            />
+            <View style={styles.greetingBox}><Text>{this.props.selectedFlashAir}</Text></View>
+          </View>
+        </View>
       </View>
     );
   }
 };
+const mapStateToProps = state => {
+  return {
+    login: !!state.accessToken,
+    user: state.user,
+    flashairs: state.flashairs,
+    selectedFlashAir: state.selectedFlashAir,
+  };
+};
+const mapDispatchToProps = dispatch => {
+  return {
+    setAccessToken: at => dispatch(actions.setAccessToken(at)),
+    updateUserInfo: () => dispatch(actions.updateUserInfo()),
+    updateFlashAirList: () => dispatch(actions.updateFlashAirList()),
+    selectFlashAir: id => dispatch(actions.selectFlashAir(id)),
+  };
+};
+FlashAirIoTHub_VR = connect(mapStateToProps, mapDispatchToProps)(FlashAirIoTHub_VR)
+FlashAirIoTHub_VR1 = () => <Provider store={store}><FlashAirIoTHub_VR /></Provider>;
 
-AppRegistry.registerComponent('FlashAirIoTHub_VR', () => FlashAirIoTHub_VR);
+AppRegistry.registerComponent('FlashAirIoTHub_VR', () => FlashAirIoTHub_VR1);

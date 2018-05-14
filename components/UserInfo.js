@@ -13,9 +13,7 @@ export default class UserInfo extends React.Component {
   }
   render() {
     return (
-      <View style={styles.greetingBox}>
-        <Text>Welcome {this.props.user.email}!</Text>
-      </View>
+      <Text>Welcome {this.props.user.email}!</Text>
     );
   }
 };

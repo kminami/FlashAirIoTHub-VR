@@ -12,7 +12,11 @@ export default class FlashAirList extends React.Component {
     this.props.updateFlashAirList();
   }
   render() {
-    const flashairs = this.props.flashairs.map(flashair => <VrButton key={flashair.id}><Text>{flashair.id}: {flashair.name}</Text></VrButton>)
+    const flashairs = this.props.flashairs.map(flashair =>
+      <VrButton key={flashair.id} onClick={this.props.selectFlashAir.bind(this.props, flashair.id)}>
+        <Text>{flashair.id}: {flashair.name}</Text>
+      </VrButton>
+    )
     return (
       <View style={styles.greetingBox}>
         {flashairs}
