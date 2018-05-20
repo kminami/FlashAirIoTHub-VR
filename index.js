@@ -16,6 +16,7 @@ import reducer from './components/reducers';
 import Login from './components/Login';
 import UserInfo from './components/UserInfo';
 import FlashAirList from './components/FlashAirList';
+import FlashAirData from './components/FlashAirData';
 
 const {MyModule} = NativeModules;
 const store = createStore(reducer, applyMiddleware(thunkMiddleware));
@@ -35,6 +36,8 @@ export default class FlashAirIoTHub_VR extends React.Component {
     if (!this.props.login) {
       return <Login />;
     }
+    let selected = this.props.flashairs.filter(fa => fa.id === this.props.selectedFlashAir);
+    selected = selected.length === 1 ? selected[0] : null;
     return (
       <View>
         <View style={styles.panel}>
@@ -50,7 +53,11 @@ export default class FlashAirIoTHub_VR extends React.Component {
               selectFlashAir={this.props.selectFlashAir}
               flashairs={this.props.flashairs}
             />
-            <View style={styles.greetingBox}><Text>{this.props.selectedFlashAir}</Text></View>
+            <FlashAirData
+              flashair={selected}
+              lastAccess={this.props.lastAccesses[this.props.selectedFlashAir]}
+              files={this.props.files[this.props.selectedFlashAir]}
+            />
           </View>
         </View>
       </View>
@@ -63,6 +70,8 @@ const mapStateToProps = state => {
     user: state.user,
     flashairs: state.flashairs,
     selectedFlashAir: state.selectedFlashAir,
+    lastAccesses: state.lastAccesses,
+    files: state.files,
   };
 };
 const mapDispatchToProps = dispatch => {

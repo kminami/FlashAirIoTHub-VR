@@ -19,7 +19,7 @@ export default class Login extends React.Component {
     return (
       <View style={styles.panel}>
         <View style={styles.greetingBox}>
-          <Text style={styles.greeting}>
+          <Text style={styles.title}>
             FlashAir IoT Hub - VR Demo
           </Text>
         </View>
