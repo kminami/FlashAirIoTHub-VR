@@ -16,7 +16,7 @@ export default class FlashAirData extends React.Component {
     if (this.props.files) {
       files = this.props.files.map(file => (
         <View key={file.id}>
-          <Text>{file.id} {file.name}</Text>
+          <Text>{file.id} {file.name} {file.created_at}</Text>
           {/*<FetchImage deviceId={this.props.flashair.id} imageId={file.id} />*/}
         </View>
       ));
