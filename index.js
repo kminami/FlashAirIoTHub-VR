@@ -18,7 +18,7 @@ import UserInfo from './components/UserInfo';
 import FlashAirList from './components/FlashAirList';
 import FlashAirData from './components/FlashAirData';
 
-const {MyModule} = NativeModules;
+const { MyModule } = NativeModules;
 const store = createStore(reducer, applyMiddleware(thunkMiddleware));
 
 export default class FlashAirIoTHub_VR extends React.Component {
@@ -56,7 +56,7 @@ export default class FlashAirIoTHub_VR extends React.Component {
             <FlashAirData
               flashair={selected}
               lastAccess={this.props.lastAccesses[this.props.selectedFlashAir]}
-              files={this.props.files[this.props.selectedFlashAir]}
+              files={this.props.files[this.props.selectedFlashAir] || []}
             />
           </View>
         </View>

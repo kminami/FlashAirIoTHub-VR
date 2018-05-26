@@ -12,22 +12,22 @@ export default class FlashAirData extends React.Component {
     if (!this.props.flashair) {
       return null;
     }
-    let files = [];
-    if (this.props.files) {
-      files = this.props.files.map(file => (
-        <View key={file.id}>
-          <Text>{file.id} {file.name} {file.created_at}</Text>
-          {/*<FetchImage deviceId={this.props.flashair.id} imageId={file.id} />*/}
-        </View>
-      ));
-    }
     return (
       <View style={styles.right}>
         <Text>Name: {this.props.flashair.name}</Text>
         <Text>ID: {this.props.flashair.id}</Text>
         {/*<Text>Last access: {this.props.lastAccess}</Text>*/}
-        <Text>Files:</Text>
-        {files}
+        <Text>Images:</Text>
+        <View style={styles.imageList}>
+          {this.props.files
+          .filter(file => file.type === 'image')
+          .map(file => (
+            <View style={styles.image} key={file.id}>
+              <FetchImage deviceId={this.props.flashair.id} imageId={file.id} />
+              <Text>{file.name}</Text>
+            </View>
+          ))}
+        </View>
       </View>
     );
   }
